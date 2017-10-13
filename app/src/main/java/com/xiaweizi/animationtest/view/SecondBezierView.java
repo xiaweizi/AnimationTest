@@ -17,79 +17,88 @@ import android.view.View;
  */
 public class SecondBezierView extends View {
 
-    private float mStartX;
-    private float mStartY;
+    private float mStartPointX;
+    private float mStartPointY;
 
-    private float mEndX;
-    private float mEndY;
+    private float mEndPointX;
+    private float mEndPointY;
 
-    private float mFlagX;
-    private float mFlagY;
+    private float mFlagPointX;
+    private float mFlagPointY;
 
-    private Paint mBezierPaint;
-    private Paint mPointPaint;
-    private Paint mTextPaint;
     private Path mPath;
 
+    private Paint mPaintBezier;
+    private Paint mPaintFlag;
+    private Paint mPaintFlagText;
+
     public SecondBezierView(Context context) {
-        this(context, null);
+        super(context);
     }
 
     public SecondBezierView(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
+        super(context, attrs);
+        mPaintBezier = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mPaintBezier.setStrokeWidth(8);
+        mPaintBezier.setStyle(Paint.Style.STROKE);
+
+        mPaintFlag = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mPaintFlag.setStrokeWidth(3);
+        mPaintFlag.setStyle(Paint.Style.STROKE);
+
+        mPaintFlagText = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mPaintFlagText.setStyle(Paint.Style.STROKE);
+        mPaintFlagText.setTextSize(20);
     }
 
-    public SecondBezierView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        mBezierPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mBezierPaint.setStrokeWidth(7);
-        mBezierPaint.setStyle(Paint.Style.STROKE);
-
-        mPointPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mPointPaint.setStrokeWidth(7);
-        mPointPaint.setStyle(Paint.Style.STROKE);
-
-        mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mTextPaint.setTextSize(20);
-        mTextPaint.setStyle(Paint.Style.STROKE);
-
-
-        mPath = new Path();
+    public SecondBezierView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        mStartX = w / 4;
-        mStartY = h + 200;
-        mEndX = w / 4 * 3;
-        mEndY = h + 200;
+        mStartPointX = w / 4;
+        mStartPointY = h / 2 - 200;
 
-        mFlagX = w / 2;
-        mFlagY = h / 2;
+        mEndPointX = w * 3 / 4;
+        mEndPointY = h / 2 - 200;
+
+        mFlagPointX = w / 2;
+        mFlagPointY = h / 2 - 300;
+
+        mPath = new Path();
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
         mPath.reset();
-        mPath.moveTo(mStartX, mStartY);
-        mPath.quadTo(mFlagX, mFlagY, mEndX, mEndY);
-        canvas.drawPoint(mFlagX, mFlagY, mPointPaint);
-        canvas.drawText("控制点", mFlagX, mFlagY, mTextPaint);
-        canvas.drawPath(mPath, mBezierPaint);
+        mPath.moveTo(mStartPointX, mStartPointY);
+        mPath.quadTo(mFlagPointX, mFlagPointY, mEndPointX, mEndPointY);
+
+        canvas.drawPoint(mStartPointX, mStartPointY, mPaintFlag);
+        canvas.drawText("起点", mStartPointX, mStartPointY, mPaintFlagText);
+        canvas.drawPoint(mEndPointX, mEndPointY, mPaintFlag);
+        canvas.drawText("终点", mEndPointX, mEndPointY, mPaintFlagText);
+        canvas.drawPoint(mFlagPointX, mFlagPointY, mPaintFlag);
+        canvas.drawText("控制点", mFlagPointX, mFlagPointY, mPaintFlagText);
+        canvas.drawLine(mStartPointX, mStartPointY, mFlagPointX, mFlagPointY, mPaintFlag);
+        canvas.drawLine(mEndPointX, mEndPointY, mFlagPointX, mFlagPointY, mPaintFlag);
+
+        canvas.drawPath(mPath, mPaintBezier);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_MOVE:
-                mFlagX = event.getX();
-                mFlagY = event.getY();
+                mFlagPointX = event.getX();
+                mFlagPointY = event.getY();
                 invalidate();
                 break;
         }
         return true;
+
     }
 }
