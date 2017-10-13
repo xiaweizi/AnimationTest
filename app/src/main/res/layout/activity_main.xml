@@ -14,4 +14,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <Button
+        android:onClick="thirdBezier"
+        android:text="三阶贝塞尔曲线"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
 </LinearLayout>
